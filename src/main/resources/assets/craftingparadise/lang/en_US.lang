@@ -1,0 +1,34 @@
+#Item
+
+item.planet_module_iron_core.name=Core Module
+item.planet_module_lava_mantle.name=Mantle Module
+item.planet_module_stone_crust.name=Crust Module
+item.planet_module_dirt_landscape.name=Land Module
+item.planet_module_standard_world.name=World Module: Standard
+item.planet_module_tropical_world.name=World Module: Tropical
+item.planet_module_swamp_world.name=World Module: Swampy
+item.planet_module_seasonal_world.name=World Module: Autumnal
+item.planet_module_lush_world.name=World Module: Luscious
+item.planet_module_magma_world.name=World Module: Magmatic
+item.planet_module_polluted_world.name=World Module: Toxic
+item.planet_module_frozen_world.name=World Module: Frozen
+item.planet_module_flat_world.name=World Module: Flat
+item.planet_module_magic_world.name=World Module: Magical
+item.planet_module_blood_world.name=World Module: Blood-soaked
+item.planet_module_arid_world.name=World Module: Desert
+item.planet_module_blue_atmosphere.name=Atmosphere Module: Standard
+item.planet_module_thick_blue_atmosphere.name=Atmosphere Module: Thick Blue
+item.planet_module_thick_red_atmosphere.name=Atmosphere Module: Thick Red
+item.planet_module_polluted_atmosphere.name=Atmosphere Module: Polluted
+item.planet_module_gold_atmosphere.name=Atmosphere Module: Golden
+item.planet_module_swamp_atmosphere.name=Atmosphere Module: Swampy
+item.planet_module_magical_atmosphere.name=Atmosphere Module: Magical
+item.planet_module_cold_atmosphere.name=Atmosphere Module: Icy
+
+#Block
+
+tile.world_machine.name=World Machine
+tile.BiomeShifter.name=Biome Changer
+
+#Misc Localizations
+itemGroup.CraftingParadise=Crafting Paradise

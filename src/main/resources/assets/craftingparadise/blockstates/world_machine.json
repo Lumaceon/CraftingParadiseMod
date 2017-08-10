@@ -1,0 +1,16 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+            "top": "craftingparadise:blocks/world_machine_top",
+            "bottom": "craftingparadise:blocks/world_machine_bottom",
+            "side": "craftingparadise:blocks/world_machine_side"
+	    },
+		"model": "cube_bottom_top",
+		"transform": "forge:default-block"
+    },
+	"variants": {
+		"normal": [{}],
+		"inventory": [{}]
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "parent": "craftingparadise:item/standard",
+    "textures": {
+        "layer0": "craftingparadise:item/world_machine_module"
+    }
+}
