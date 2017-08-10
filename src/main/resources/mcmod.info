@@ -3,7 +3,7 @@
   "modid": "craftingparadise",
   "name": "Crafting Paradise",
   "description": "Custom mod for the Crafting Paradise modpack, used to swap biomes and add a custom skyrenderer to display planets.",
-  "version": "1.12-0.5",
+  "version": "1.12-0.1.2",
   "mcversion": "1.10.2",
   "url": "",
   "updateUrl": "",

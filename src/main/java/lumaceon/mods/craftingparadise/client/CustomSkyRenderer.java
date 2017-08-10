@@ -10,10 +10,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.IRenderHandler;
-import org.apache.commons.lang3.reflect.FieldUtils;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.lwjgl.opengl.GL11;
 
-import java.util.Random;
+import java.lang.reflect.Field;
 
 public class CustomSkyRenderer extends IRenderHandler
 {
@@ -23,53 +23,28 @@ public class CustomSkyRenderer extends IRenderHandler
 
     private boolean isInitialized = false;
 
-    private boolean isVboEnabled = false;
+    private Field isVboEnabled;
 
-    private VertexBuffer starVBO;
-    private VertexBuffer skyVBO;
-    private VertexBuffer sky2VBO;
+    //private boolean isVboEnabled = false;
 
-    private int starGLCallList;
-    private int glSkyList;
-    private int glSkyList2;
+    private Field starVBO;
+    private Field skyVBO;
+    private Field sky2VBO;
+
+    private Field starGLCallList;
+    private Field glSkyList;
+    private Field glSkyList2;
 
     public void init()
     {
-        try {
-            isVboEnabled = (boolean) FieldUtils.readField(Minecraft.getMinecraft().renderGlobal, "vboEnabled", true);
-            if(isVboEnabled)
-            {
-                starVBO = (VertexBuffer) FieldUtils.readField(Minecraft.getMinecraft().renderGlobal, "starVBO", true);
-                skyVBO = (VertexBuffer) FieldUtils.readField(Minecraft.getMinecraft().renderGlobal, "skyVBO", true);
-                sky2VBO = (VertexBuffer) FieldUtils.readField(Minecraft.getMinecraft().renderGlobal, "sky2VBO", true);
-            }
-            else
-            {
-                starGLCallList = (int) FieldUtils.readField(Minecraft.getMinecraft().renderGlobal, "starGLCallList", true);
-                glSkyList = (int) FieldUtils.readField(Minecraft.getMinecraft().renderGlobal, "glSkyList", true);
-                glSkyList2 = (int) FieldUtils.readField(Minecraft.getMinecraft().renderGlobal, "glSkyList2", true);
-            }
-        } catch (IllegalAccessException e) {
-            System.out.println("Failed to use reflection to access GL call lists from RenderGlobal.");
-            e.printStackTrace();
-        }
-
-        if(isVboEnabled)
-        {
-            if(starVBO != null && skyVBO != null && sky2VBO != null)
-            {
-                isInitialized = true;
-            }
-        }
-        else
-        {
-            if(starGLCallList != -1 && glSkyList != -1 && glSkyList2 != -1)
-            {
-                isInitialized = true;
-            }
-        }
-
-
+        isVboEnabled = ReflectionHelper.findField(RenderGlobal.class, "vboEnabled", "field_175005_X");
+        starVBO = ReflectionHelper.findField(RenderGlobal.class, "starVBO", "field_175013_s");
+        skyVBO = ReflectionHelper.findField(RenderGlobal.class, "skyVBO", "field_175012_t");
+        sky2VBO = ReflectionHelper.findField(RenderGlobal.class, "sky2VBO", "field_175011_u");
+        starGLCallList = ReflectionHelper.findField(RenderGlobal.class, "starGLCallList", "field_72772_v");
+        glSkyList = ReflectionHelper.findField(RenderGlobal.class, "glSkyList", "field_72771_w");
+        glSkyList2 = ReflectionHelper.findField(RenderGlobal.class, "glSkyList2", "field_72781_x");
+        isInitialized = true;
 
         /*this.starGLCallList = GLAllocation.generateDisplayLists(3);
         GL11.glPushMatrix();
@@ -128,12 +103,6 @@ public class CustomSkyRenderer extends IRenderHandler
         if(!isInitialized)
             init();
 
-        if(isVboEnabled != OpenGlHelper.useVbo())
-        {
-            isInitialized = false;
-            init();
-        }
-
         //This would probably have resulted in a recursion error. This is probably where this method is called in the first place.
         //net.minecraftforge.client.IRenderHandler renderer = world.provider.getSkyRenderer();
         /*if(renderer != null)
@@ -167,18 +136,48 @@ public class CustomSkyRenderer extends IRenderHandler
             GlStateManager.enableFog();
             GlStateManager.color(f, f1, f2);
 
-            if(this.isVboEnabled)
+
+            boolean useVbo = false;
+            try {
+                useVbo = this.isVboEnabled.getBoolean(mc.renderGlobal);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            VertexBuffer starsVboValue = null;
+            VertexBuffer skyVboValue = null;
+            VertexBuffer sky2VboValue = null;
+            try {
+                starsVboValue = ((VertexBuffer) this.starVBO.get(mc.renderGlobal));
+                skyVboValue = ((VertexBuffer) this.skyVBO.get(mc.renderGlobal));
+                sky2VboValue = ((VertexBuffer) this.sky2VBO.get(mc.renderGlobal));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            int glStarListValue = -1;
+            int glSkyListValue = -1;
+            int glSky2ListValue = -1;
+            try {
+                glStarListValue = this.starGLCallList.getInt(mc.renderGlobal);
+                glSkyListValue = this.glSkyList.getInt(mc.renderGlobal);
+                glSky2ListValue = this.glSkyList2.getInt(mc.renderGlobal);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            if(useVbo && skyVboValue != null)
             {
-                this.skyVBO.bindBuffer();
+                skyVboValue.bindBuffer();
                 GlStateManager.glEnableClientState(32884);
                 GlStateManager.glVertexPointer(3, 5126, 12, 0);
-                this.skyVBO.drawArrays(7);
-                this.skyVBO.unbindBuffer();
+                skyVboValue.drawArrays(7);
+                skyVboValue.unbindBuffer();
                 GlStateManager.glDisableClientState(32884);
             }
             else
             {
-                GlStateManager.callList(this.glSkyList);
+                GlStateManager.callList(glSkyListValue);
             }
 
             GlStateManager.disableFog();
@@ -363,18 +362,18 @@ public class CustomSkyRenderer extends IRenderHandler
             if(f15 > 0.0F)
             {
                 GlStateManager.color(f15, f15, f15, f15);
-                if (this.isVboEnabled)
+                if(useVbo)
                 {
-                    this.starVBO.bindBuffer();
+                    starsVboValue.bindBuffer();
                     GlStateManager.glEnableClientState(32884);
                     GlStateManager.glVertexPointer(3, 5126, 12, 0);
-                    this.starVBO.drawArrays(7);
-                    this.starVBO.unbindBuffer();
+                    starsVboValue.drawArrays(7);
+                    starsVboValue.unbindBuffer();
                     GlStateManager.glDisableClientState(32884);
                 }
                 else
                 {
-                    GlStateManager.callList(this.starGLCallList);
+                    GlStateManager.callList(glStarListValue);
                 }
             }
 
@@ -392,18 +391,18 @@ public class CustomSkyRenderer extends IRenderHandler
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(0.0F, 12.0F, 0.0F);
 
-                if(this.isVboEnabled)
+                if(useVbo)
                 {
-                    this.sky2VBO.bindBuffer();
+                    sky2VboValue.bindBuffer();
                     GlStateManager.glEnableClientState(32884);
                     GlStateManager.glVertexPointer(3, 5126, 12, 0);
-                    this.sky2VBO.drawArrays(7);
-                    this.sky2VBO.unbindBuffer();
+                    sky2VboValue.drawArrays(7);
+                    sky2VboValue.unbindBuffer();
                     GlStateManager.glDisableClientState(32884);
                 }
                 else
                 {
-                    GlStateManager.callList(this.glSkyList2);
+                    GlStateManager.callList(glSky2ListValue);
                 }
 
                 GlStateManager.popMatrix();

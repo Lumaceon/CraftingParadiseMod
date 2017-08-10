@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 public class ContainerWorldMachine extends Container
 {
@@ -39,6 +40,43 @@ public class ContainerWorldMachine extends Container
         this.addSlotToContainer(land);
         this.addSlotToContainer(world);
         this.addSlotToContainer(atmosphere);
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int index)
+    {
+        Slot slot = this.inventorySlots.get(index);
+        if(slot == null || !slot.getHasStack())
+            return ItemStack.EMPTY;
+
+        ItemStack originalItem = slot.getStack();
+        ItemStack copyItem = originalItem.copy();
+
+        if(index >= 36) //Item is in our container, try placing in player's inventory.
+        {
+            if(!this.mergeItemStack(originalItem, 0, 36, true))
+                return ItemStack.EMPTY;
+        }
+        else
+        {
+            if(!this.mergeItemStack(originalItem, 36, this.inventorySlots.size(), false))
+                return ItemStack.EMPTY;
+        }
+
+        if(copyItem.getCount() == 0)
+            slot.putStack(ItemStack.EMPTY);
+        else
+            slot.onSlotChanged();
+
+        if(originalItem.getCount() == 0)
+            slot.putStack(ItemStack.EMPTY);
+        else
+            slot.onSlotChanged();
+
+        if(copyItem.getCount() == originalItem.getCount())
+            return ItemStack.EMPTY;
+        slot.onTake(player, copyItem);
+        return originalItem;
     }
 
     @Override
