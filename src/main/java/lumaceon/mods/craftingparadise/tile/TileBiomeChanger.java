@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 
-public class TileBiomeChanger extends TileMod implements ITickable
+public class TileBiomeChanger extends TileGeneric implements ITickable
 {
     private Biome targetBiome;
     private int worldId;

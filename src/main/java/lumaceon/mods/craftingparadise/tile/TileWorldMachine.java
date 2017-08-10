@@ -12,7 +12,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
-public class TileWorldMachine extends TileMod implements IInventory
+public class TileWorldMachine extends TileGeneric implements IInventory
 {
     @CapabilityInject(IItemHandler.class)
     static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
