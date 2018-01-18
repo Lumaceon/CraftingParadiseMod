@@ -331,6 +331,7 @@ public class CustomSkyRenderer extends IRenderHandler
                 }
                 if(ActivePlanet.isAtmosphereVisible())
                 {
+                    GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
                     f10 = ActivePlanet.atmosphereModule.textureSize;
                     mc.renderEngine.bindTexture(ActivePlanet.atmosphereModule.textureLocation);
                     bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
